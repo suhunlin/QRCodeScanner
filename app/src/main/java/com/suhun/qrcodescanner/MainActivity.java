@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         super.onResume();
         mScannerView.setResultHandler(this); // Register ourselves as a handler for scan results.
         mScannerView.startCamera();          // Start camera on resume
+        sendMessageBtn.setEnabled(false);
     }
 
     @Override
@@ -79,11 +80,16 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
     @Override
     public void handleResult(Result rawResult) {
+        String[] result;
         // Do something with the result here
         Log.v(tag, rawResult.getText()); // Prints scan results
         Log.v(tag, rawResult.getBarcodeFormat().toString()); // Prints the scan format (qrcode, pdf417 etc.)
-
+        result = rawResult.getText().split(":");
+        if(result!=null && result.length==3 && result[0].equals("SMSTO")){
+            sendMessageBtn.setEnabled(true);
+            showScanResult.setText( rawResult.getText());
+        }
         // If you would like to resume scanning, call this method below:
-        mScannerView.resumeCameraPreview(this);
+//        mScannerView.resumeCameraPreview(this);
     }
 }
