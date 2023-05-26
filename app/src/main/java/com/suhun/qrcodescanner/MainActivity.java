@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.PatternMatcher;
 import android.util.Log;
@@ -54,7 +56,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
             }
         }
     }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -70,7 +71,12 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     }
 
     public void sendMessageFun(View view){
-
+        String textContent = showScanResult.getText().toString();
+        String[] resultSplit = textContent.split(":");
+        Uri uri = Uri.parse("smsto:"+resultSplit[1]);
+        Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
+        intent.putExtra("sms_body", resultSplit[2]);
+        startActivity(intent);
     }
 
     private void initQRCode(){
