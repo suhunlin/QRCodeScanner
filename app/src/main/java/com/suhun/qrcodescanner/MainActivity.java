@@ -14,24 +14,33 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.google.zxing.Result;
+
+import java.util.HashMap;
+import java.util.LinkedList;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 public class MainActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler {
     private String tag = MainActivity.class.getSimpleName();
     private ZXingScannerView mScannerView;
-    private Button sendMessageBtn;
+    private Button sendMessageBtn, addBtn;
     private TextView showScanResult;
     private ListView scanListView;
+    private SimpleAdapter simpleAdapter;
+    private LinkedList<HashMap<String, String>> data = new LinkedList<>();
+    private String[] from = {"itemKey"};
+    private int[] to = {R.id.list_item};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
+        initListView();
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)==
                 PackageManager.PERMISSION_GRANTED){
             initQRCode();
@@ -41,8 +50,14 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     }
     private void initView(){
         sendMessageBtn = findViewById(R.id.sendMessage);
+        addBtn = findViewById(R.id.add);
         showScanResult = findViewById(R.id.showScan);
         mScannerView = findViewById(R.id.zxingView);
+    }
+    private void initListView(){
+        scanListView = findViewById(R.id.recordScan);
+        simpleAdapter = new SimpleAdapter(this, data, R.layout.item, from, to);
+        scanListView.setAdapter(simpleAdapter);
     }
 
     @Override
@@ -62,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         mScannerView.setResultHandler(this); // Register ourselves as a handler for scan results.
         mScannerView.startCamera();          // Start camera on resume
         sendMessageBtn.setEnabled(false);
+        addBtn.setEnabled(false);
     }
 
     @Override
@@ -79,6 +95,15 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         startActivity(intent);
     }
 
+    public void addFun(View view){
+        HashMap<String, String> listViewData = new HashMap<>();
+        listViewData.put(from[0], showScanResult.getText().toString());
+        data.add(listViewData);
+        simpleAdapter.notifyDataSetChanged();
+        addBtn.setEnabled(false);
+        mScannerView.resumeCameraPreview(this);
+    }
+
     private void initQRCode(){
 //        mScannerView = new ZXingScannerView(this);
         mScannerView = findViewById(R.id.zxingView);
@@ -93,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         result = rawResult.getText().split(":");
         if(result!=null && result.length==3 && result[0].equals("SMSTO")){
             sendMessageBtn.setEnabled(true);
+            addBtn.setEnabled(true);
             showScanResult.setText( rawResult.getText());
         }
         // If you would like to resume scanning, call this method below:

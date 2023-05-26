@@ -36,6 +36,14 @@
             android:textAllCaps="false"
             android:onClick="sendMessageFun"
             />
+        <Button
+            android:id="@+id/add"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Add"
+            android:textAllCaps="false"
+            android:onClick="addFun"
+            />
         <ListView
             android:id="@+id/recordScan"
             android:layout_width="match_parent"
