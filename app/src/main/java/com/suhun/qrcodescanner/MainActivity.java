@@ -10,6 +10,9 @@ import android.os.Bundle;
 import android.os.PatternMatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.zxing.Result;
 
@@ -18,17 +21,26 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
 public class MainActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler {
     private String tag = MainActivity.class.getSimpleName();
     private ZXingScannerView mScannerView;
+    private Button sendMessageBtn;
+    private TextView showScanResult;
+    private ListView scanListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initView();
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)==
                 PackageManager.PERMISSION_GRANTED){
             initQRCode();
         }else{
             requestPermissions(new String[]{Manifest.permission.CAMERA}, 123);
         }
+    }
+    private void initView(){
+        sendMessageBtn = findViewById(R.id.sendMessage);
+        showScanResult = findViewById(R.id.showScan);
+        mScannerView = findViewById(R.id.zxingView);
     }
 
     @Override
@@ -61,7 +73,8 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     }
 
     private void initQRCode(){
-        mScannerView = new ZXingScannerView(this);
+//        mScannerView = new ZXingScannerView(this);
+        mScannerView = findViewById(R.id.zxingView);
     }
 
     @Override
